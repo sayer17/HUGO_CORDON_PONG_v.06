@@ -9,14 +9,51 @@ public class PlayerController : MonoBehaviour
     public float topHeigh;// lmite de las palas
     public float botHeigh;
     public bool useArrowKeys = false;// if true, use arrow key; if false, use W S
+    public bool IA;
+    public GameObject ball;
+    public float IAfollowTolerance = 0.5f;
 
     void Update()
     {
-        MovePaddle();
+        if (IA == false)
+        {
+            MovePaddle();
+        }
+        else
+        {
+            MovePaddleIA();
+        }
+       
     }
     void MovePaddle()
     {
         this.gameObject.transform.position = new Vector3(this.transform.position.x, ConstrainPaddle(), this.transform.position.z);
+    }
+    void MovePaddleIA()
+    {
+       
+        int direccion = 0;
+        float diferencia = ball.transform.position.y - transform.position.y;
+
+
+        if (diferencia > IAfollowTolerance)
+        {
+            direccion = 1;
+        }
+        else if (diferencia < -IAfollowTolerance)
+        {
+            direccion = -1;
+        }
+        float nuevaY = transform.position.y + (direccion * moveSpeed / 2 * Time.deltaTime);
+        if (nuevaY > topHeigh)
+        {
+            nuevaY = topHeigh;
+        }
+        if (nuevaY < botHeigh)
+        {
+            nuevaY = botHeigh;
+        }
+        this.gameObject.transform.position = new Vector3(transform.position.x, nuevaY, transform.position.z);
     }
     float ConstrainPaddle()
     {
